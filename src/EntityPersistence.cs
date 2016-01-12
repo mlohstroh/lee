@@ -9,7 +9,7 @@ namespace LEE
     {
         private string _persistenceStoreDir;
         private DirectoryInfo _rootDirectoryInfo;
-        private Dictionary<string, DirectoryInfo> _subDirs;
+        private Dictionary<string, EntityTable> _subDirs;
 
         public EntityPersistence (string storeDir)
         {
@@ -24,18 +24,18 @@ namespace LEE
 
             DirectoryInfo[] dirs = _rootDirectoryInfo.GetDirectories ();
 
-            _subDirs = new Dictionary<string, DirectoryInfo> ();
+            _subDirs = new Dictionary<string, EntityTable> ();
             for (int i = 0; i < dirs.Length; i++)
             {
-                _subDirs [dirs [i].Name] = dirs [i];
+                _subDirs [dirs [i].Name] = new EntityTable (dirs [i]);
             }
         }
 
         public T RetrieveEntity<T>(Guid id)
         {
-            DirectoryInfo di = EnsureDirectoryForType (typeof(T));
+            EntityTable table = EnsureDirectoryForType (typeof(T));
 
-            return InternalRead<T>(di, id);
+            return InternalRead<T>(table.Directory, id);
         }
 
         public Guid WriteEntity<T>(T e) where T : Entity
@@ -44,8 +44,8 @@ namespace LEE
             if (e.Id == Guid.Empty)
                 e.Id = Guid.NewGuid ();
 
-            DirectoryInfo di = EnsureDirectoryForType (e.GetType());
-            using (StreamWriter writer = new StreamWriter (PathForDirectoryAndID (di, e.Id)))
+            EntityTable table = EnsureDirectoryForType (e.GetType());
+            using (StreamWriter writer = new StreamWriter (PathForDirectoryAndID (table.Directory, e.Id)))
             {
                 var serializer = MessagePackSerializer.Get<T> ();
                 serializer.Pack (writer.BaseStream, e);
@@ -54,16 +54,17 @@ namespace LEE
             return e.Id;
         }
 
-        private DirectoryInfo EnsureDirectoryForType(Type t)
+        private EntityTable EnsureDirectoryForType(Type t)
         {
-            DirectoryInfo di;
-            if (!_subDirs.TryGetValue (t.Name, out di))
+            EntityTable table;
+            if (!_subDirs.TryGetValue (t.Name, out table))
             {
-                di = _rootDirectoryInfo.CreateSubdirectory (t.Name);
-                _subDirs [t.Name] = di;
+                var di = _rootDirectoryInfo.CreateSubdirectory (t.Name);
+                table = new EntityTable (di);
+                _subDirs [t.Name] = table;
             }
 
-            return di;
+            return table;
         }
 
         private T InternalRead<T>(DirectoryInfo di, Guid id)

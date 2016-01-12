@@ -38,12 +38,14 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Entity.cs" />
-    <Compile Include="src\Player.cs" />
     <Compile Include="src\EntityPersistence.cs" />
+    <Compile Include="src\EntityTable.cs" />
+    <Compile Include="src\Logging\LogManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\Logging\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
