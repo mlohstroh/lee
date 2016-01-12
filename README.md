@@ -1,6 +1,6 @@
 # LEE - Little Entity Engine
 
-Just an tiny wrapper over [MsgPack](https://github.com/msgpack/msgpack-cli) backed by a file system.
+Just an tiny wrapper over [MsgPack](https://github.com/msgpack/msgpack-cli) backed by the file system.
 
 ## Usage
 
