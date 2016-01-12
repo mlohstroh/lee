@@ -1,4 +1,5 @@
 # LEE - Little Entity Engine
+[![Build status](https://ci.appveyor.com/api/projects/status/f4j80cduvi4daavn?svg=true)](https://ci.appveyor.com/project/mlohstroh/lee)
 
 Just an tiny wrapper over [MsgPack](https://github.com/msgpack/msgpack-cli) backed by the file system.
 
