@@ -1,6 +1,7 @@
 ﻿using System;
+using LEE;
 
-namespace LEE
+namespace RunLee
 {
     public class Player : Entity
     {
@@ -9,6 +10,7 @@ namespace LEE
         public Player ()
             : base()
         {
+            
         }
     }
 }
