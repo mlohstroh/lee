@@ -31,7 +31,7 @@ namespace LEE
             }
         }
 
-        public T ReadEntity<T>(Guid id)
+        public T RetrieveEntity<T>(Guid id)
         {
             DirectoryInfo di = EnsureDirectoryForType (typeof(T));
 
@@ -40,6 +40,10 @@ namespace LEE
 
         public Guid WriteEntity<T>(T e) where T : Entity
         {
+            // Ensure the GUID here, we can be sure that they will call base
+            if (e.Id == Guid.Empty)
+                e.Id = Guid.NewGuid ();
+
             DirectoryInfo di = EnsureDirectoryForType (e.GetType());
             using (StreamWriter writer = new StreamWriter (PathForDirectoryAndID (di, e.Id)))
             {

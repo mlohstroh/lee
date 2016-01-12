@@ -17,9 +17,9 @@ namespace LEE
             EntityPersistence m = new EntityPersistence ("Database");
             Guid id = m.WriteEntity (p);
 
-            Player readFromDisk = m.ReadEntity<Player> (id);
+            Player readFromDisk = m.RetrieveEntity<Player> (id);
 
-            Player noneExistent = m.ReadEntity<Player>(Guid.NewGuid());
+            Player noneExistent = m.RetrieveEntity<Player>(Guid.NewGuid());
 
             Console.Read();
         }
