@@ -36,6 +36,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Sample1\Player.cs" />
+    <Compile Include="Sample.cs" />
+    <Compile Include="src\Sample2\Sample2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -47,5 +49,6 @@
   <ItemGroup>
     <Folder Include="src\" />
     <Folder Include="src\Sample1\" />
+    <Folder Include="src\Sample2\" />
   </ItemGroup>
 </Project>

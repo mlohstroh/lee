@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LEE;
 
 namespace RunLee
@@ -7,18 +8,25 @@ namespace RunLee
     {
         public static void Main (string[] args)
         {
-            Player p = new Player () {
-                Name = "Baller"
-            };
+            List<Sample> samples = new List<Sample> ();
+            samples.Add (new Sample1 ()
+            {
+                Name = "Basic Usage"
+            });
 
-            EntityPersistence m = new EntityPersistence ("Database");
-            Guid id = m.WriteEntity (p);
+            samples.Add (new Sample2 ()
+            {
+                Name = "Nested Class"
+            });
 
-            Player readFromDisk = m.RetrieveEntity<Player> (id);
 
-            Player noneExistent = m.RetrieveEntity<Player>(Guid.NewGuid());
-
-            Console.Read();   
+            for (int i = 0; i < samples.Count; i++)
+            {
+                Console.WriteLine ("================ Starting sample {0} ================", samples[i].Name);
+                samples [i].Run ();
+                Console.WriteLine ("================ Ending sample {0} ================", samples[i].Name);
+                Console.WriteLine ();
+            }
         }
     }
 }
