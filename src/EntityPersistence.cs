@@ -16,6 +16,9 @@ namespace LEE
             _persistenceStoreDir = storeDir;
 
             EnsureStoreDir ();
+
+            // Probably an overall deficit to performance, but one that will really help with version tolaerance
+            SerializationContext.Default.SerializationMethod = SerializationMethod.Map;
         }
 
         private void EnsureStoreDir()

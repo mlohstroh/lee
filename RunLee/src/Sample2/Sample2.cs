@@ -36,9 +36,13 @@ namespace RunLee
                 }
             };
 
+            Console.WriteLine("Loading persistence directory...");
             EntityPersistence p = new EntityPersistence ("Database");
 
+            Console.WriteLine("Writing entity with special subclass");
             var id = p.WriteEntity<Weapon> (w);
+
+            Console.WriteLine("Reading entity with special subclass");
             Weapon read = p.RetrieveEntity<Weapon>(id);
         }
     }

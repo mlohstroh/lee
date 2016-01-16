@@ -19,14 +19,22 @@ namespace RunLee
                 Name = "Nested Class"
             });
 
+            samples.Add(new Sample3()
+            {
+                Name = "Versioning"
+            });
+
 
             for (int i = 0; i < samples.Count; i++)
             {
-                Console.WriteLine ("================ Starting sample {0} ================", samples[i].Name);
+                Console.WriteLine ("================ Starting sample: {0} ================", samples[i].Name);
                 samples [i].Run ();
-                Console.WriteLine ("================ Ending sample {0} ================", samples[i].Name);
+                Console.WriteLine ("================ Ending sample: {0} ================", samples[i].Name);
                 Console.WriteLine ();
             }
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
     }
 }

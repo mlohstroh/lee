@@ -22,7 +22,7 @@ namespace RunLee
                 Name = "MsgPackPlayer"
             };
                     
-            Console.WriteLine ("Creating persistence model");
+            Console.WriteLine ("Creating persistence directory...");
             EntityPersistence m = new EntityPersistence ("Database");
             Console.WriteLine ("Writing model");
             Guid id = m.WriteEntity (p);
@@ -30,7 +30,7 @@ namespace RunLee
             Console.WriteLine ("Reading model");
             m.RetrieveEntity<Player> (id);
 
-            Console.WriteLine ("Reading nonexistent smodel");
+            Console.WriteLine ("Reading nonexistent model");
             m.RetrieveEntity<Player>(Guid.NewGuid());
         }
     }
