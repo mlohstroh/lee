@@ -9,6 +9,7 @@ namespace LEE
     {
         public string Name { get { return _dir.Name; } }
         public DirectoryInfo Directory { get { return _dir; } }
+        public EntityPersistence Persistence { get; set; }
         private DirectoryInfo _dir;
         private Dictionary<Guid, FileInfo> _table;
         private Logger _log;
@@ -19,6 +20,12 @@ namespace LEE
             _log = LogManager.CreateLogger (Name);
 
             BuildTable ();
+        }
+
+        public long EntityCount
+        {
+            // because this is all in memory now
+            get { return _table.Count; }
         }
 
         private void BuildTable()

@@ -2,36 +2,107 @@
 using System.IO;
 using System.Collections.Generic;
 using MsgPack.Serialization;
+using LEE.Logging;
 
 namespace LEE
 {
     public class EntityPersistence
     {
+        // Please never change this
+        internal const string _versionFileName = "_version";
+
         private string _persistenceStoreDir;
         private DirectoryInfo _rootDirectoryInfo;
         private Dictionary<string, EntityTable> _subDirs;
+        internal VersionPolicy _policy;
+        private VersionFile _version;
+        private Logger _log = LogManager.CreateLogger("EntityPersistence");
 
-        public EntityPersistence (string storeDir)
+        public EntityPersistence(string storeDir, VersionPolicy policy = VersionPolicy.Tolerant)
         {
             _persistenceStoreDir = storeDir;
+            _policy = policy;
 
-            EnsureStoreDir ();
-
-            // Probably an overall deficit to performance, but one that will really help with version tolaerance
-            SerializationContext.Default.SerializationMethod = SerializationMethod.Map;
+            EnsureStoreDir();
+            SetSyncContextForVersionPolicy();
+            SaveVersionFile();
         }
 
         private void EnsureStoreDir()
         {
-            _rootDirectoryInfo = Directory.CreateDirectory (_persistenceStoreDir);
+            _log.LogDebug("Ensuring database directory...");
+            _rootDirectoryInfo = Directory.CreateDirectory(_persistenceStoreDir);
 
-            DirectoryInfo[] dirs = _rootDirectoryInfo.GetDirectories ();
+            DirectoryInfo[] dirs = _rootDirectoryInfo.GetDirectories();
+            _subDirs = new Dictionary<string, EntityTable>();
 
-            _subDirs = new Dictionary<string, EntityTable> ();
-            for (int i = 0; i < dirs.Length; i++)
+            // We need to nuke the directory
+            if (DidVersionsChange())
             {
-                _subDirs [dirs [i].Name] = new EntityTable (dirs [i]);
+                // maybe we should do a move here instead of a delete?
+                _log.LogWarningFormat("VersionPolicy was changed from {0} to {1}. Wiping directory due to unreadable data.", _version.Policy, _policy);
+                // set the policy
+                _version.Policy = _policy;
+
+                for (int i = 0; i < dirs.Length; i++)
+                {
+                    dirs[i].Delete(true);
+                }
             }
+            else
+            {
+                _log.LogDebug("Loading entity tables...");
+                for (int i = 0; i < dirs.Length; i++)
+                {
+                    _subDirs[dirs[i].Name] = new EntityTable(dirs[i])
+                    {
+                        Persistence = this
+                    };
+                }
+            }
+        }
+
+        private bool DidVersionsChange()
+        {
+            string versionPath = Path.Combine(_rootDirectoryInfo.Name, _versionFileName);
+            // see if any changes have been made
+            if (File.Exists(versionPath))
+            {
+                FileInfo fileHandle = new FileInfo(versionPath);
+                VersionFile version = VersionFile.RetrieveFile(fileHandle);
+
+                _version = version;
+
+                return version.Policy != _policy;
+            }
+            // else, nothing changed, just create a new file
+            _version = new VersionFile()
+            {
+                Policy = _policy,
+                // global versions will probably never change
+                VersionID = 1
+            };
+
+            return false;
+        }
+
+        private void SetSyncContextForVersionPolicy()
+        {
+            switch(_version.Policy)
+            {
+                case VersionPolicy.Tolerant:
+                    SerializationContext.Default.SerializationMethod = SerializationMethod.Map;
+                    break;
+                case VersionPolicy.InTolerant:
+                    SerializationContext.Default.SerializationMethod = SerializationMethod.Array;
+                    break;
+            }
+        }
+
+        private void SaveVersionFile()
+        {
+            string versionPath = Path.Combine(_rootDirectoryInfo.Name, _versionFileName);
+            VersionFile.SaveFile(new FileInfo(versionPath), _version);
         }
 
         public T RetrieveEntity<T>(Guid id) where T : Entity

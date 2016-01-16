@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,13 +40,13 @@
     <Compile Include="src\Entity.cs" />
     <Compile Include="src\EntityPersistence.cs" />
     <Compile Include="src\EntityTable.cs" />
+    <Compile Include="src\Enums.cs" />
     <Compile Include="src\Logging\LogManager.cs" />
+    <Compile Include="src\Profiling\Profiler.cs" />
+    <Compile Include="src\VersionFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="src\" />
-    <Folder Include="src\Logging\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
