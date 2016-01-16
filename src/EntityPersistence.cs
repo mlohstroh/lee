@@ -34,7 +34,7 @@ namespace LEE
             }
         }
 
-        public T RetrieveEntity<T>(Guid id)
+        public T RetrieveEntity<T>(Guid id) where T : Entity
         {
             EntityTable table = EnsureDirectoryForType (typeof(T));
 
