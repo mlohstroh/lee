@@ -28,23 +28,26 @@ namespace LEE.Profiling
 
         #endregion
 
+        public Logger Log = LogManager.CreateLogger("LEE::Profiler");
+
         public ProfileTag ProfileBlock(string blockName)
         {
-            return new ProfileTag(blockName);
+            return new ProfileTag(blockName, this);
         }
     }
 
     public class ProfileTag : IDisposable
     {
-        private Logger _log = LogManager.CreateLogger("LEE::Profiler");
         private Stopwatch _watch;
         public string Tag { get; private set; }
+        public Profiler Profiler { get; private set; }
 
-        public ProfileTag(string tag)
+        public ProfileTag(string tag, Profiler profiler)
         {
             _watch = new Stopwatch();
             _watch.Start();
             Tag = tag;
+            Profiler = profiler;
         }
 
         public void Dispose()
@@ -53,8 +56,8 @@ namespace LEE.Profiling
             {
                 _watch.Stop();
 
-                if (_log.IsInfoEnabled)
-                    _log.LogInfoFormat("{0}: {1}", Tag, _watch.Elapsed.ToString("G"));
+                if (Profiler.Log.IsInfoEnabled)
+                    Profiler.Log.LogInfoFormat("{0}: {1}", Tag, _watch.Elapsed.ToString("G"));
             }
         }
     }

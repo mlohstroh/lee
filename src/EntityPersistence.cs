@@ -16,16 +16,22 @@ namespace LEE
         private Dictionary<string, EntityTable> _subDirs;
         internal VersionPolicy _policy;
         private VersionFile _version;
-        private Logger _log = LogManager.CreateLogger("EntityPersistence");
+        private Logger _log = LogManager.CreateLogger("Lee::EntityPersistence");
 
         public EntityPersistence(string storeDir, VersionPolicy policy = VersionPolicy.Tolerant)
         {
             _persistenceStoreDir = storeDir;
             _policy = policy;
 
-            EnsureStoreDir();
-            SetSyncContextForVersionPolicy();
-            SaveVersionFile();
+            // enable profiling by default
+            Profiling.Profiler.Default.Log.Level = LogLevel.Info;
+
+            using (Profiling.Profiler.Default.ProfileBlock("EntityPersistence::Load"))
+            {
+                EnsureStoreDir();
+                SetSyncContextForVersionPolicy();
+                SaveVersionFile();
+            }
         }
 
         private void EnsureStoreDir()
